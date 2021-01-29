@@ -15,10 +15,10 @@ class CoiProjectPipeline:
                 with open(item['fileName']+'.pdf','wb') as f:
                     f.write(item['content'])
                     f.close()
-                    print("download successfully")
+                    print("\r{}.pdf >> download successfully".format(item['fileName']))
                     return item
             except:
-                print('fail to download')
+                print("\r{}.pdf >> download UNsuccessfully".format(item['fileName']))
                 return item
 
         else:
