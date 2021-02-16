@@ -13,6 +13,7 @@ class CoiProjectPipeline:
         if item['fileName']:
             try:
                 with open(item['fileName']+'.pdf','wb') as f:
+                    print('1\n')
                     f.write(item['content'])
                     f.close()
                     print("\r{}.pdf >> download successfully".format(item['fileName']))

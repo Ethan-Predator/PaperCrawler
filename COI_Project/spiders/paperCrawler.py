@@ -32,7 +32,7 @@ class PapercrawlerSpider(scrapy.Spider):
                 cnt = 0;
                 for paper in citations:
                     cnt = cnt + 1
-                    if cnt > 10:
+                    if cnt > 5:
                         return
                     names = []
                     # if paper['authors']:
@@ -66,6 +66,7 @@ class PapercrawlerSpider(scrapy.Spider):
             if match:
                 # print(match.group(0))
                 try:
+                    print("before return:"+url)
                     return scrapy.Request(url=url, callback=lambda response, curPaper=curPaper: self.parse_paper(response,curPaper))
                 except Exception as e:
                     print('\rException happens in {}'.format(url)+str(e))
@@ -89,6 +90,7 @@ class PapercrawlerSpider(scrapy.Spider):
 
 
     def parse_paper(self,response, curPaper):
+        print('before check')
         if response.status != 200:
             root = './json'
             path = root + '/wait4FurtherCrawler.json'
@@ -107,6 +109,7 @@ class PapercrawlerSpider(scrapy.Spider):
             except:
                 print('Exception in file I/O')
             return
+        print('after check')
         request_url = response.request.url
         item = CoiProjectItem()
         item['fileName'] = request_url.split('/')[-1][:-4]

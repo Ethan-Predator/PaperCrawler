@@ -14,7 +14,7 @@ NEWSPIDER_MODULE = 'COI_Project.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+# USER_AGENT = 'Chrome/59.0.3071.115'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -44,9 +44,9 @@ COOKIES_ENABLED = False
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'COI_Project.middlewares.CoiProjectSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+   'COI_Project.middlewares.CoiProjectSpiderMiddleware': 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -91,6 +91,6 @@ DOWNLOAD_TIMEOUT = 15
 
 RETRY_ENABLED = False
 
-REDIRECT_ENABLED = False
+REDIRECT_ENABLED = True
 
 
