@@ -5,10 +5,10 @@
 
 from scrapy import signals
 import random
+import requests
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
-
 
 
 class CoiProjectSpiderMiddleware:
@@ -104,7 +104,8 @@ class CoiProjectDownloaderMiddleware:
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
-class RandomUserAgentMiddleware():
+
+class RandomUserAgentMiddleware:
     def __init__(self):
         self.user_agents = [
             'Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)',
@@ -114,3 +115,23 @@ class RandomUserAgentMiddleware():
 
     def process_request(self, request, spider):
         request.headers['User-Agent'] = random.choice(self.user_agents)
+
+
+class RandomProxyMiddleware(object):
+    def __init__(self):
+        self.proxypool_url = 'http://127.0.0.1:5555/random'
+
+    def get_random_proxy(self):
+        """
+        get random proxy from proxypool
+        :return: proxy
+        """
+        try:
+            return requests.get(self.proxypool_url).text.strip()
+        except requests.exceptions.ConnectionError as e:
+            print('Proxy problem:',str(e))
+            exit(-1)
+
+    def process_request(self, request, spider):
+        request.meta['proxy'] = 'http://'+self.get_random_proxy()
+        # request.meta['proxy'] = 'http://'+'160.116.81.242:3128'

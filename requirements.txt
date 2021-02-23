@@ -1,0 +1,4 @@
+attrs==20.3.0
+requests==2.22.0
+ijson
+Scrapy==2.4.1

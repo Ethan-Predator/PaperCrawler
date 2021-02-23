@@ -50,9 +50,10 @@ SPIDER_MIDDLEWARES = {
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'COI_Project.middlewares.RandomUserAgentMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+   'COI_Project.middlewares.RandomProxyMiddleware': 543,
+   'COI_Project.middlewares.RandomUserAgentMiddleware': 544,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
