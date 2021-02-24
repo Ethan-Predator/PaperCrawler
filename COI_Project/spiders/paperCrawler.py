@@ -1,3 +1,4 @@
+import codecs
 import scrapy
 import re
 from COI_Project.items import CoiProjectItem
@@ -34,13 +35,13 @@ class PapercrawlerSpider(scrapy.Spider):
 
     def start_requests(self):
         try:
-            with open(self.json, 'r', encoding='ISO-8859-1') as f:
+            with open(self.json, 'r', encoding='UTF-8') as f:
                 citations = ijson.items(f, 'item')
                 for i in range(self.itr_from):
                     next(citations)
                 cnt = self.itr_from;
                 for paper in citations:
-                    print(str(cnt)+": ", end='')
+                    # print(str(cnt)+": ", end='')
                     cnt = cnt + 1
                     if cnt > self.itr_from+self.offset:
                         return
@@ -52,7 +53,7 @@ class PapercrawlerSpider(scrapy.Spider):
                         self.search_keyword = paper['title']
                         for name in names:
                             self.search_keyword = self.search_keyword+', '+name
-                        print(self.search_keyword)
+                        # print(self.search_keyword)
                         urls = [
                                 'https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q='+self.search_keyword+'&btnG='
                         ]
@@ -76,6 +77,14 @@ class PapercrawlerSpider(scrapy.Spider):
             # idx = idx + 1
             match = re.search('http.*pdf',url)
             if match:
+                abstract0 = ''.join(response.css('div[data-rp="0"] .gs_rs::text').extract())
+                abstract1 = ''
+                try:
+                    abstract1 = ''.join(response.css('div[data-rp="0"] .gs_rs b::text').extract())
+                except:
+                    pass
+                abstract = abstract0 + abstract1
+                curPaper['abstract'] = abstract
                 try:
                     return scrapy.Request(url=match.group(0), callback=lambda response, curPaper=curPaper: self.parse_paper(response,curPaper))
                 except Exception as e:
@@ -87,13 +96,13 @@ class PapercrawlerSpider(scrapy.Spider):
             if not os.path.exists(root):
                 os.mkdir(root)
             if not os.path.exists(path):
-                with open(path,'w', encoding='ISO-8859-1') as f:
+                with open(path,'w', encoding='UTF-8') as f:
                     json.dump(curPaper, f,cls=DecimalEncoder)
                     f.close()
             else:
-                with open(path,'a', encoding='ISO-8859-1') as f:
+                with open(path,'a', encoding='UTF-8') as f:
                     f.write(',\n')
-                    json.dump(curPaper, f,cls=DecimalEncoder)
+                    json.dump(curPaper, f, cls=DecimalEncoder)
                     f.close()
         except Exception as e:
             print('Exception in file I/O: {}'.format(str(e)))
@@ -101,27 +110,32 @@ class PapercrawlerSpider(scrapy.Spider):
 
     def parse_paper(self,response, curPaper):
         if response.status != 200:
+            if curPaper['abstract']:
+                curPaper.pop('abstract')
             root = './json'
             path = root + '/wait4FurtherCrawler.json'
             try:
                 if not os.path.exists(root):
                     os.mkdir(root)
                 if not os.path.exists(path):
-                    with open(path, 'w', encoding='ISO-8859-1') as f:
+                    with open(path, 'w', encoding='UTF-8') as f:
                         json.dump(curPaper, f,cls=DecimalEncoder)
                         f.close()
                 else:
-                    with open(path, 'a', encoding='ISO-8859-1') as f:
+                    with open(path, 'a', encoding='UTF-8') as f:
                         f.write(',\n')
-                        json.dump(curPaper, f,cls=DecimalEncoder)
+                        json.dump(curPaper, f, cls=DecimalEncoder)
                         f.close()
             except:
                 print('Exception in file I/O')
             return
-        request_url = response.request.url
+        # request_url = response.request.url
         item = CoiProjectItem()
-        item['fileName'] = request_url.split('/')[-1][:-4]
+        item['fileName'] = str(curPaper['id'])
         item['content'] = response.body
+        item['authors'] = curPaper['authors']
+        item['title'] = curPaper['title']
+        item['abstract'] = curPaper['abstract']
         yield item
 
     def logger_config(self, log_path, logging_name):
@@ -147,3 +161,13 @@ class PapercrawlerSpider(scrapy.Spider):
         logger.addHandler(handler)
         logger.addHandler(console)
         return logger
+
+    def unmangle_utf8(self, match):
+        escaped = match.group(0)  # '\\u00e2\\u0082\\u00ac'
+        hexstr = escaped.replace(r'\u00', '')  # 'e282ac'
+        buffer = codecs.decode(hexstr, "hex")  # b'\xe2\x82\xac'
+
+        try:
+            return buffer.decode('utf8')  # '€'
+        except UnicodeDecodeError:
+            print("Could not decode buffer: %s" % buffer)

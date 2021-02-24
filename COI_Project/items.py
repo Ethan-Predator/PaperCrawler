@@ -11,4 +11,7 @@ class CoiProjectItem(scrapy.Item):
     # name = scrapy.Field()
     fileName = scrapy.Field()
     content = scrapy.Field()
+    authors = scrapy.Field()
+    title = scrapy.Field()
+    abstract = scrapy.Field()
     pass

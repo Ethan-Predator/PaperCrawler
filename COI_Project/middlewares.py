@@ -134,4 +134,4 @@ class RandomProxyMiddleware(object):
 
     def process_request(self, request, spider):
         request.meta['proxy'] = 'http://'+self.get_random_proxy()
-        # request.meta['proxy'] = 'http://'+'160.116.81.242:3128'
+        # request.meta['proxy'] = 'http://'+'124.156.245.161:17158'

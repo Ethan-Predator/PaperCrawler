@@ -28,3 +28,8 @@ How to use:
 	 Running command example:
      	cd PaperCrawler --> put your json file here -->  scrapy crawl paperCrawler -a json='/Users/anonymity/Desktop/COI/COI_Project/dblp.v12.json' -a itr_from=0 -a offset=50 --nolog
 
+  Output: 1. all the downloadable pdf files from google scholar
+  		  2. the meta data for each downloadable paper
+          3. a json file containing the papers that cannot be downloaded
+          4. a log file recording the download progress
+
