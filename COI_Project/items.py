@@ -14,4 +14,5 @@ class CoiProjectItem(scrapy.Item):
     authors = scrapy.Field()
     title = scrapy.Field()
     abstract = scrapy.Field()
+    counter = scrapy.Field()
     pass

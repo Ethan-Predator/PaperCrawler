@@ -26,6 +26,7 @@ class PapercrawlerSpider(scrapy.Spider):
         super(PapercrawlerSpider, self).__init__(*args, **kwargs)
         if json == None:
             print("No Json file specified")
+        self.counter = 0
         self.json = json
         self.search_keyword = ''
         self.itr_from = int(itr_from)
@@ -68,6 +69,7 @@ class PapercrawlerSpider(scrapy.Spider):
 
 
     def parse(self, response, curPaper):
+        self.counter = self.counter + 1
         # print(response.request.headers)
         # print(response.request.meta)
         URLs = response.css('a::attr(href)').extract()
@@ -131,6 +133,7 @@ class PapercrawlerSpider(scrapy.Spider):
             return
         # request_url = response.request.url
         item = CoiProjectItem()
+        item['counter'] = str(self.counter)
         item['fileName'] = str(curPaper['id'])
         item['content'] = response.body
         item['authors'] = curPaper['authors']

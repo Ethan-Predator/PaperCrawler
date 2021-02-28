@@ -27,7 +27,7 @@ class CoiProjectPipeline:
                     paper_dic = {'title':item['title'], 'authors':item['authors'], 'abstract':item['abstract']}
                     json.dump(paper_dic, f, cls=DecimalEncoder)
                     f.close()
-                    print("\r{}.meta >> download successfully".format(item['fileName']))
+                    print("\r{}.meta >> download successfully --- cnt:{}".format(item['fileName'], item['counter']))
             except Exception as e:
                 print("\r{}.meta >> download UNsuccessfully --- {}".format(item['fileName'], str(e)))
             try:
